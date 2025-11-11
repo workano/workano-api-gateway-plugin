@@ -12,7 +12,7 @@
 location ^~ /my-call-logd/ {
     # Rewrite to original Wazo API path
     # Example: /api/my-call-log/ → /api/call-logd/
-    rewrite ^/my-call-logd/(.*)$ /api/call-logd/1.0/$1 break;
+    rewrite ^/my-call-logd/(.*)$ /1.0/$1 break;
 
     # Proxy to Wazo backend
     proxy_pass http://127.0.0.1:9298/;
