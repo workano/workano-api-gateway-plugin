@@ -34,10 +34,10 @@ location ^~ /my-call-logd/my-cdr/ {
     # ===========================
     # 🚫 ERROR HANDLING
     # ===========================
-    proxy_intercept_errors on;
+    # proxy_intercept_errors on;
 
     # Redirect intercepted error responses to the handler below
-    error_page 400 401 403 404 500 502 503 504 = @api_error;
+    # error_page 400 401 403 404 500 502 503 504 = @api_error;
 }
 
 # ===========================
