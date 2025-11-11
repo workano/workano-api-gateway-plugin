@@ -3,7 +3,7 @@
 # ===============================
 location ^~ /my-auth/ {
     # Rewrite to real Wazo auth endpoint
-    rewrite ^/my-auth/?(.*)$ /api/auth/0.1/$1 break;
+    rewrite ^/my-auth/?(.*)$ /0.1/$1 break;
 
     proxy_pass http://127.0.0.1:9497/;
 
