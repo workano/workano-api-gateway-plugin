@@ -1,0 +1,30 @@
+#!/bin/sh
+
+case "$1" in
+build)
+    ;;
+
+package)
+    cp -R etc ${pkgdir}/
+    ;;
+
+install)
+    ln -s /etc/nginx/locations/https-available/workano-auth /etc/nginx/locations/https-enabled/workano-auth
+    ln -s /etc/nginx/locations/https-available/workano-call-logd /etc/nginx/locations/https-enabled/workano-call-logd
+
+    systemctl reload nginx
+    ;;
+
+uninstall)
+    rm /etc/nginx/locations/https-enabled/workano-auth /etc/nginx/locations/https-available/workano-auth
+    rm /etc/nginx/locations/https-enabled/workano-call-logd /etc/nginx/locations/https-available/workano-call-logd
+    systemctl reload nginx
+    ;;
+
+postrm) ;;
+
+    *)
+    echo "$0 called with unknown argument '$1'" >&2
+    exit 1
+    ;;
+esac

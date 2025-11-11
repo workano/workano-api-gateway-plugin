@@ -1,0 +1,56 @@
+##
+# Wazo API Proxy Template
+# Description:
+#   Expose an internal Wazo API under a new route, remap headers,
+#   and sanitize error responses.
+##
+
+
+# ===========================
+# 🔹 MAIN PROXY LOCATION
+# ===========================
+location ^~ /my-call-logd/my-cdr/ {
+    # Rewrite to original Wazo API path
+    # Example: /api/my-call-log/ → /api/call-logd/
+    rewrite ^/my-call-logd/my-cdr/?(.*)$ /api/call-logd/1.0/cdr/$1 break;
+
+    # Proxy to Wazo backend
+    proxy_pass http://127.0.0.1:9298/;
+
+    # ===========================
+    # 🧾 REQUEST HEADERS
+    # ===========================
+    # Pass through or override as needed
+    proxy_set_header Host              $http_host;
+    proxy_set_header X-Script-Name     /api/call-logd;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Custom header mapping
+    # Map external headers → Wazo’s internal ones
+    proxy_set_header X-Auth-Token  $http_token;
+    proxy_set_header Wazo-Tenant   $http_x_id;
+
+    # ===========================
+    # 🚫 ERROR HANDLING
+    # ===========================
+    proxy_intercept_errors on;
+
+    # Redirect intercepted error responses to the handler below
+    error_page 400 401 403 404 500 502 503 504 = @api_error;
+}
+
+# ===========================
+# 🔹 ERROR HANDLER BLOCK
+# ===========================
+location @api_error {
+    # Optional: set headers returned with errors
+    # add_header Retry-After 30 always;
+
+    # Optional: log errors for debugging
+    # access_log /var/log/nginx/<your-service>-error.log;
+
+    # Set response type and message
+    default_type application/json;
+    return 502 '{"error": "An internal error occurred. Please try again later."}';
+}

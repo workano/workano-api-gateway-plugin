@@ -1,0 +1,7 @@
+name: workano-api-gateway-plugin
+namespace: workano
+version: 1.0.0
+author: Workano Team
+display_name: Workano API Gateway Plugin
+description: This is a plugin for API Gateway
+homepage: https://workano.com
