@@ -16,6 +16,21 @@ location ^~ /my-auth/ {
     # Remove X-Powered-By header
     proxy_hide_header X-Powered-By;
 
+    # ----------------------
+    # Sub_filter to extract only token
+    # ----------------------
+    sub_filter_once on;
+
+    # This will match everything before "token": and remove it
+    sub_filter '{"data":{' '{"token":';
+
+    # This will match everything after the token value and remove it
+    # Note: be careful, this is a simple string replacement
+    sub_filter ',"auth_id":' '"}';  
+
+    sub_filter_types application/json;
+
+
     # # Intercept and modify response
     # body_filter_by_lua_block {
     #     local cjson = require("cjson.safe")
