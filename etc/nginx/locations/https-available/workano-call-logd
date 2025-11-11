@@ -9,7 +9,7 @@
 # ===========================
 # 🔹 MAIN PROXY LOCATION
 # ===========================
-location ^~ /my-call-logd/my-cdr/ {
+location ^~ /my-call-logd/my-cdr {
     # Rewrite to original Wazo API path
     # Example: /api/my-call-log/ → /api/call-logd/
     rewrite ^/my-call-logd/my-cdr$ /api/call-logd/1.0/cdr break;
