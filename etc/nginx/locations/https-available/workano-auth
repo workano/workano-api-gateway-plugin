@@ -16,29 +16,29 @@ location ^~ /my-auth/ {
     # Remove X-Powered-By header
     proxy_hide_header X-Powered-By;
 
-    # Intercept and modify response
-    body_filter_by_lua_block {
-        local cjson = require("cjson.safe")
-        local body = ngx.arg[1]
-        local eof = ngx.arg[2]
+    -- # Intercept and modify response
+    -- body_filter_by_lua_block {
+    --     local cjson = require("cjson.safe")
+    --     local body = ngx.arg[1]
+    --     local eof = ngx.arg[2]
 
-        -- Accumulate the full body
-        ngx.ctx.buffered = (ngx.ctx.buffered or "") .. (body or "")
-        if not eof then
-            ngx.arg[1] = nil
-            return
-        end
+    --     -- Accumulate the full body
+    --     ngx.ctx.buffered = (ngx.ctx.buffered or "") .. (body or "")
+    --     if not eof then
+    --         ngx.arg[1] = nil
+    --         return
+    --     end
 
-        -- Try decoding JSON
-        local decoded = cjson.decode(ngx.ctx.buffered)
-        if decoded and decoded.data and decoded.data.token then
-            local cleaned = { token = decoded.data.token }
-            ngx.arg[1] = cjson.encode(cleaned)
-        else
-            -- Fallback if decoding fails
-            ngx.arg[1] = '{"error":"Invalid response"}'
-        end
-    }
+    --     -- Try decoding JSON
+    --     local decoded = cjson.decode(ngx.ctx.buffered)
+    --     if decoded and decoded.data and decoded.data.token then
+    --         local cleaned = { token = decoded.data.token }
+    --         ngx.arg[1] = cjson.encode(cleaned)
+    --     else
+    --         -- Fallback if decoding fails
+    --         ngx.arg[1] = '{"error":"Invalid response"}'
+    --     end
+    -- }
 
     proxy_intercept_errors on;
     error_page 400 401 403 404 500 502 503 504 = @api_error;
